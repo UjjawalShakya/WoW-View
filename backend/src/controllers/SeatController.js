@@ -1,4 +1,6 @@
-// const { generateAdvancedRecommendation } = require('../utils/recommendationUtil');
+const recommendationUtil = require('../utils/recommendationUtil.js');
+console.log("Loaded recommendationUtil:", recommendationUtil);
+// const { recommendationUtil } = require('../utils/recommendationUtil');
 const axios = require('axios');
 
 // Function to fetch airport data from the external API
@@ -8,9 +10,8 @@ async function getAirportData(iataCode) {
     try {
         const response = await axios.get(url, {
             headers: {
-              //  'X-Api-Key': process.env.API_KEY ,
                'x-rapidapi-key': process.env.API_KEY,
-		'x-rapidapi-host': 'aerodatabox.p.rapidapi.com'
+		            // 'x-rapidapi-host': 'aerodatabox.p.rapidapi.com'
               }
         });
         return {
@@ -57,14 +58,14 @@ async function getSeatRecommendation(req, res) {
             },
         };
 
-        // const recommendation = generateAdvancedRecommendation(
-        //     flightDetails,
-        //     sourceAirport,
-        //     destAirport
-        // );
+        const recommendation = recommendationUtil.generateAdvancedRecommendation(
+            flightDetails,
+            sourceAirport,
+            destAirport
+        );
         
         res.status(200).json({
-            // ...recommendation,
+            ...recommendation,
             sourceAirport,
             destAirport,
         });

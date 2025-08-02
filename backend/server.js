@@ -4,7 +4,7 @@ const seatRoutes = require('./src/routes/SeatRoutes');
 const cors = require('cors'); // Import CORS
 
 const app = express();
-const port = 3000;
+const port = 4000;
 
 // Enable CORS for all routes
 app.use(cors());
