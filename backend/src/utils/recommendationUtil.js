@@ -13,16 +13,20 @@ function getSubsolarPoint(date) {
     function sunCoords(dDays) {
         const M = solarMeanAnomaly(dDays);
         const L = eclipticLongitude(M);
-        const dec = Math.asin(Math.sin(L) * Math.sin(rad * 23.4397));
-        const ra = Math.atan2(Math.sin(L) * Math.cos(rad * 23.4397), Math.cos(L));
+        const dec = Math.asin(Math.sin(L) * Math.sin(0)+ Math.cos(L)* Math.sin(L)*0);
+        const ra = Math.atan2(Math.sin(L) * Math.cos(0), Math.cos(L));
         return { dec, ra };
     }
-    function siderealTime(dDays, lon) { return rad * (280.16 + 360.9856235 * dDays) + lon; }
+    function siderealTime(dDays) { return rad * (280.16 + 360.9856235 * dDays); }
+    function normalizeLon(lon){
+    return ((((lon + 180) % 360) + 360) % 360) - 180;
+    }
     const dDays = toDays(date);
     const { ra, dec } = sunCoords(dDays);
-    const lon = (ra - siderealTime(dDays, 0)) * deg;
+    const gst = siderealTime(dDays);
+    const lon = normalizeLon((ra * deg - gst * deg) % 360);
     const lat = dec * deg;
-    return { lat, lon: (lon + 540) % 360 - 180 };
+    return { lat, lon};
 }
 
 function recommendSideByLonAngle(flightCoords, destCoords, time) {
@@ -36,27 +40,31 @@ function recommendSideByLonAngle(flightCoords, destCoords, time) {
 exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, destAirport) {
     const departureTime = new Date(flightDetails.departureTime);
     const duration = flightDetails.duration;
-    const intervalMinutes = 5;
+    const intervalMinutes = 1;
     const sourceCoords = [sourceAirport.location.lon, sourceAirport.location.lat];
     const destCoords = [destAirport.location.lon, destAirport.location.lat];
     const path = turf.lineString([sourceCoords, destCoords]);
-    const totalLength = turf.length(path, { units: 'kilometers' });
+    const totalLength = turf.length(path);
     let leftCount = 0, rightCount = 0, sunriseEvent = null, sunsetEvent = null;
 
     for (let i = 0; i <= duration; i += intervalMinutes) {
         const currentTime = new Date(departureTime.getTime() + i * 60 * 1000);
         const distAlong = (i / (duration || 1)) * totalLength;
-        const coord = turf.along(path, distAlong, { units: 'kilometers' }).geometry.coordinates;
+        const coord = turf.along(path, distAlong).geometry.coordinates;
         const side = recommendSideByLonAngle(coord, destCoords, currentTime);
         if (side === "LEFT") leftCount++; else rightCount++;
         const [lon, lat] = coord;
         const times = SunCalc.getTimes(currentTime, lat, lon);
-        const nextTime = new Date(currentTime.getTime() + intervalMinutes * 60 * 1000);
-        if (!sunriseEvent && times.sunrise.value > currentTime && times.sunrise.value <= nextTime) {
-            sunriseEvent = { time: times.sunrise.value, location: { lat, lon } };
+        const sunriseStart = new Date(times.sunrise.getTime() - 5 * 60 * 1000);
+        const sunriseEnd = new Date(times.sunrise.getTime() + 5 * 60 * 1000);
+        const sunsetStart = new Date(times.sunset.getTime() - 5 * 60 * 1000);
+        const sunsetEnd = new Date(times.sunset.getTime() + 5 * 60 * 1000);
+
+        if (!sunriseEvent && currentTime >= sunriseStart && currentTime <= sunriseEnd) {
+            sunriseEvent = { time: currentTime, location: { lat, lon } };
         }
-        if (!sunsetEvent && times.sunset.value > currentTime && times.sunset.value <= nextTime) {
-            sunsetEvent = { time: times.sunset.value, location: { lat, lon } };
+        if (!sunsetEvent && currentTime >= sunsetStart && currentTime <= sunsetEnd) {
+            sunsetEvent = { time: currentTime, location: { lat, lon } };
         }
     }
 

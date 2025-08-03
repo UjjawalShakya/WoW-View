@@ -17,7 +17,7 @@ export default function SeatForm({ onSubmit, loading }) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100"
     style={{
-        // backgroundImage: "url('/map-bg.jpg')",
+        backgroundImage: "url('/map-bg.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

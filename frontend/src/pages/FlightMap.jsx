@@ -38,7 +38,7 @@ function interpolateCoords(source, dest, fraction) {
 
 // Custom icons
 const planeIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/34/34627.png",
+  iconUrl: "/airplane.png", // path relative to public folder
   iconSize: [32, 32],
   iconAnchor: [16, 16],
 });
