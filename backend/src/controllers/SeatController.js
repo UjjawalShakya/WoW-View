@@ -68,6 +68,8 @@ async function getSeatRecommendation(req, res) {
             ...recommendation,
             sourceAirport,
             destAirport,
+            departureTime,
+            duration,
         });
 
     } catch (error) {
