@@ -3,6 +3,7 @@ const SunCalc = require("suncalc");
 
 function getSubsolarPoint(date) {
     const rad = Math.PI / 180, deg = 180 / Math.PI;
+    const obliquity = 23.4397 * rad;
     function toDays(d) { return d.getTime() / 86400000 - 10957.5; }
     function solarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
     function eclipticLongitude(M) {
@@ -13,8 +14,8 @@ function getSubsolarPoint(date) {
     function sunCoords(dDays) {
         const M = solarMeanAnomaly(dDays);
         const L = eclipticLongitude(M);
-        const dec = Math.asin(Math.sin(L) * Math.sin(0)+ Math.cos(L)* Math.sin(L)*0);
-        const ra = Math.atan2(Math.sin(L) * Math.cos(0), Math.cos(L));
+        const dec = Math.asin(Math.sin(L) * Math.sin(obliquity));
+        const ra = Math.atan2(Math.sin(L) * Math.cos(obliquity), Math.cos(L));
         return { dec, ra };
     }
     function siderealTime(dDays) { return rad * (280.16 + 360.9856235 * dDays); }
@@ -54,16 +55,19 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
         const side = recommendSideByLonAngle(coord, destCoords, currentTime);
         if (side === "LEFT") leftCount++; else rightCount++;
         const [lon, lat] = coord;
-        const times = SunCalc.getTimes(currentTime, lat, lon);
+        const dateAtLocation = new Date(currentTime);
+        dateAtLocation.setHours(12,0,0,0);
+        const times = SunCalc.getTimes(dateAtLocation, lat, lon, 0, false);
+        console.log(times);
         const sunriseStart = new Date(times.sunrise.getTime() - 5 * 60 * 1000);
         const sunriseEnd = new Date(times.sunrise.getTime() + 5 * 60 * 1000);
         const sunsetStart = new Date(times.sunset.getTime() - 5 * 60 * 1000);
         const sunsetEnd = new Date(times.sunset.getTime() + 5 * 60 * 1000);
 
-        if (!sunriseEvent && currentTime >= sunriseStart && currentTime <= sunriseEnd) {
+        if (currentTime >= sunriseStart && currentTime <= sunriseEnd) {
             sunriseEvent = { time: currentTime, location: { lat, lon } };
         }
-        if (!sunsetEvent && currentTime >= sunsetStart && currentTime <= sunsetEnd) {
+        if (currentTime >= sunsetStart && currentTime <= sunsetEnd) {
             sunsetEvent = { time: currentTime, location: { lat, lon } };
         }
     }

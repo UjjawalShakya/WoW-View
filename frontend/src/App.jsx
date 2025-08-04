@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SeatForm from "./pages/SeatForm";
 import SeatResult from "./pages/SeatResult";
+import Navbar from "./pages/Navbar";
 
 export default function App() {
   const [page, setPage] = useState("home");
@@ -25,9 +26,10 @@ export default function App() {
     setPage("result");
     setLoading(false);
   };
-
+  const goHome = () => setPage("home");
   return (
     <>
+      <Navbar onHome={goHome} />
       {page === "home" ? (
         <SeatForm onSubmit={handleFormSubmit} loading={loading} />
       ) : (

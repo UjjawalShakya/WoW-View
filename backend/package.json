@@ -26,6 +26,7 @@
     "express": "^4.21.0",
     "moment": "^2.29.4",
     "suncalc": "^1.9.0",
+    "suncalc3": "^2.0.5",
     "turf": "^3.0.14"
   },
   "devDependencies": {

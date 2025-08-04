@@ -69,7 +69,8 @@ export default function SeatForm({ onSubmit, loading }) {
               </label>
             </div>
           </div>
-          <button type="submit" disabled={loading} className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 transition">
+          <button type="submit" disabled={loading} className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 transition"
+          style={{  cursor: "pointer" }}>
             {loading ? "Loading..." : "Get Recommendation"}
           </button>
         </form>

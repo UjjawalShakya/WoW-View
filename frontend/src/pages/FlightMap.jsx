@@ -40,6 +40,11 @@ function interpolateCoords(source, dest, fraction) {
 }
 
 // Custom icons
+const SourceIcon = new L.Icon({
+  iconUrl: "/pin.png", // path relative to public folder
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
 const DestIcon = new L.Icon({
   iconUrl: "/location.png", // path relative to public folder
   iconSize: [32, 32],
@@ -99,33 +104,32 @@ export default function FlightMap({ sourceAirport, destAirport, departureTime, d
 
   return (
     <div className="mb-8">
-      <MapContainer center={center} zoom={3} style={{ height: "400px", width: "100%" }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; OpenStreetMap contributors"
-        />
-        <Polyline positions={path} color="indigo" />
-        <Polyline positions={path2} color="yellow" />
-        <Marker position={[planePos.lat, planePos.lon]} icon={planeIcon}>
-        </Marker>
-        <Marker position={[sunPos.lat, sunPos.lon]} icon={sunIcon}>
-        </Marker>
-        <Marker position={[source.lat, source.lon]} icon={DestIcon}>
-        </Marker>
-        <Marker position={[dest.lat, dest.lon]} icon={DestIcon}>
-        </Marker>
-      </MapContainer>
-      <div className="flex items-center gap-4 mt-4">
-        <label className="font-semibold text-gray-700">Flight Time:</label>
+      <div className="rounded-3xl border-2 border-blue-400 shadow-2xl overflow-hidden"
+        style={{ boxShadow: "0 8px 32px 0 rgba(44, 62, 80, 0.2)" }}>
+        <MapContainer center={center} zoom={3} style={{ height: "400px", width: "100%" }}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; OpenStreetMap contributors"
+          />
+          <Polyline positions={path} color="indigo" />
+          <Polyline positions={path2} color="yellow" />
+          <Marker position={[planePos.lat, planePos.lon]} icon={planeIcon} />
+          <Marker position={[sunPos.lat, sunPos.lon]} icon={sunIcon} />
+          <Marker position={[source.lat, source.lon]} icon={SourceIcon} />
+          <Marker position={[dest.lat, dest.lon]} icon={SourceIcon} />
+        </MapContainer>
+      </div>
+      <div className="flex items-center gap-2 mt-4">
+        <label className="font-semibold text-blue-900">Flight Time:</label>
         <input
           type="range"
           min={0}
           max={duration}
           value={flightTime}
           onChange={e => setFlightTime(Number(e.target.value))}
-          className="flex-1"
+          className="flex-1 accent-blue-600"
         />
-        <span className="font-mono">{flightTime} min</span>
+        <span className="font-mono text-blue-700">{flightTime} min</span>
       </div>
     </div>
   );
