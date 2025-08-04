@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
+import "leaflet-rotatedmarker";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -29,6 +30,19 @@ function getSubsolarPoint(date) {
     const lon = normalizeLon((ra * deg - gst * deg) % 360);
     const lat = dec * deg;
     return { lat, lon};
+}
+
+function getBearing(from, to) {
+  const lat1 = from.lat * Math.PI / 180;
+  const lon1 = from.lon * Math.PI / 180;
+  const lat2 = to.lat * Math.PI / 180;
+  const lon2 = to.lon * Math.PI / 180;
+  const dLon = lon2 - lon1;
+  const y = Math.sin(dLon) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) -
+            Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+  const brng = Math.atan2(y, x) * 180 / Math.PI;
+  return (brng + 360) % 360;
 }
 
 // Helper: interpolate position along great circle
@@ -113,7 +127,12 @@ export default function FlightMap({ sourceAirport, destAirport, departureTime, d
           />
           <Polyline positions={path} color="indigo" />
           <Polyline positions={path2} color="yellow" />
-          <Marker position={[planePos.lat, planePos.lon]} icon={planeIcon} />
+          <Marker
+  position={[planePos.lat, planePos.lon]}
+  icon={planeIcon}
+  rotationAngle={getBearing(planePos, dest)}
+  rotationOrigin="center"
+/>
           <Marker position={[sunPos.lat, sunPos.lon]} icon={sunIcon} />
           <Marker position={[source.lat, source.lon]} icon={SourceIcon} />
           <Marker position={[dest.lat, dest.lon]} icon={SourceIcon} />
