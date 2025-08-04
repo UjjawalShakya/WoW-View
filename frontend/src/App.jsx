@@ -19,7 +19,7 @@ export default function App() {
       wantsSunset: form.preference === "SUNSET",
       priority: form.preference,
     });
-    const res = await fetch(`http://localhost:4000/api/recommend?${params.toString()}`);
+    const res = await fetch(`https://wow-view-backend.onrender.com/api/recommend?${params.toString()}`);
     const data = await res.json();
     setResult(data);
     setPage("result");
