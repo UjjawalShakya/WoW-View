@@ -58,7 +58,6 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
         const dateAtLocation = new Date(currentTime);
         dateAtLocation.setHours(12,0,0,0);
         const times = SunCalc.getTimes(dateAtLocation, lat, lon, 0, false);
-        console.log(times);
         const sunriseStart = new Date(times.sunrise.getTime() - 5 * 60 * 1000);
         const sunriseEnd = new Date(times.sunrise.getTime() + 5 * 60 * 1000);
         const sunsetStart = new Date(times.sunset.getTime() - 5 * 60 * 1000);

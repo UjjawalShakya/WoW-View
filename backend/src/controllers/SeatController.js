@@ -46,7 +46,7 @@ async function getSeatRecommendation(req, res) {
         const flightDetails = {
             source: source.toUpperCase(),
             destination: destination.toUpperCase(),
-            departureTime: new Date(departureTime).toISOString(),
+            departureTime: departureTime,
             duration: parseInt(duration, 10),
             sunPreference: {
                 wantsSunrise: wantsSunrise === 'true',
@@ -54,6 +54,7 @@ async function getSeatRecommendation(req, res) {
                 priority: priority || null,
             },
         };
+        console.log(`Original Departure Time: ${departureTime} , New departure time: ${flightDetails.departureTime}`)
 
         const recommendation = recommendationUtil.generateAdvancedRecommendation(
             flightDetails,
