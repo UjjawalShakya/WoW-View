@@ -40,7 +40,6 @@ function recommendSideByLonAngle(flightCoords, destCoords, time) {
 
 exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, destAirport) {
     const departureTime = flightDetails.departureTime;
-    console.log("Departure Time:", departureTime);
     const duration = flightDetails.duration;
     const intervalMinutes = 1;
     const sourceCoords = [sourceAirport.location.lon, sourceAirport.location.lat];
@@ -52,7 +51,6 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
     for (let i = 0; i <= duration; i += intervalMinutes) {
         const currentTime = new Date(departureTime.getTime() + i * 60 * 1000);
         const currentTimeInUTC = new Date(currentTime.toISOString());
-        console.log(`Calculating for time: ${currentTimeInUTC}`);
         const distAlong = (i / (duration || 1)) * totalLength;
         const coord = turf.along(path, distAlong).geometry.coordinates;
         const side = recommendSideByLonAngle(coord, destCoords, currentTime);
@@ -70,7 +68,6 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
         const sunriseEndInUTC = new Date(sunriseEnd.toISOString());
         const sunsetStartInUTC = new Date(sunsetStart.toISOString());
         const sunsetEndInUTC = new Date(sunsetEnd.toISOString());
-        console.log(`Sunrise: ${sunrisestartInUTC} to ${sunriseEndInUTC}, Sunset: ${sunsetStartInUTC} to ${sunsetEndInUTC}`);
 
         if (currentTimeInUTC >= sunrisestartInUTC && currentTimeInUTC <= sunriseEndInUTC) {
             sunriseEvent = { time: currentTime, location: { lat, lon } };
@@ -78,7 +75,6 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
         if (currentTimeInUTC >= sunsetStartInUTC && currentTimeInUTC <= sunsetEndInUTC) {
             sunsetEvent = { time: currentTime, location: { lat, lon } };
         }
-        console.log(sunsetEvent, sunriseEvent);
     }
 
     let finalSide, reason;
