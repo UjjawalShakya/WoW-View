@@ -39,7 +39,7 @@ function recommendSideByLonAngle(flightCoords, destCoords, time) {
 }
 
 exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, destAirport) {
-    const departureTime = new Date(flightDetails.departureTime);
+    const departureTime = flightDetails.departureTime;
     console.log("Departure Time:", departureTime);
     const duration = flightDetails.duration;
     const intervalMinutes = 1;
@@ -51,12 +51,15 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
 
     for (let i = 0; i <= duration; i += intervalMinutes) {
         const currentTime = new Date(departureTime.getTime() + i * 60 * 1000);
+        currentTime = new Date(currentTime.toISOString());
+        console.log(`Current Time: ${currentTime}`);
         const distAlong = (i / (duration || 1)) * totalLength;
         const coord = turf.along(path, distAlong).geometry.coordinates;
         const side = recommendSideByLonAngle(coord, destCoords, currentTime);
         if (side === "LEFT") leftCount++; else rightCount++;
         const [lon, lat] = coord;
         const dateAtLocation = new Date(currentTime);
+        dateAtLocation = new Date(dateAtLocation.toISOString());
         dateAtLocation.setHours(12,0,0,0);
         const times = SunCalc.getTimes(dateAtLocation, lat, lon, 0, true);
         console.log(times);

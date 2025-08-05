@@ -55,7 +55,7 @@ async function getSeatRecommendation(req, res) {
                 priority: priority || null,
             },
         };
-        console.log(`Original Departure Time: ${departureTime} , New departure time: ${flightDetails.departureTime}`)
+        console.log(`Original Departure Time: ${departureTime} , New departure time: ${utcDeparture}`)
 
         const recommendation = recommendationUtil.generateAdvancedRecommendation(
             flightDetails,
