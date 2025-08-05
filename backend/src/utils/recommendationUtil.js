@@ -66,12 +66,16 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
         const sunriseEnd = new Date(times.sunrise.getTime() + 5 * 60 * 1000);
         const sunsetStart = new Date(times.sunset.getTime() - 5 * 60 * 1000);
         const sunsetEnd = new Date(times.sunset.getTime() + 5 * 60 * 1000);
-        console.log(`Sunrise: ${sunriseStart} to ${sunriseEnd}, Sunset: ${sunsetStart} to ${sunsetEnd}`);
+        const sunrisestartInUTC = new Date(sunriseStart.toISOString());
+        const sunriseEndInUTC = new Date(sunriseEnd.toISOString());
+        const sunsetStartInUTC = new Date(sunsetStart.toISOString());
+        const sunsetEndInUTC = new Date(sunsetEnd.toISOString());
+        console.log(`Sunrise: ${sunrisestartInUTC} to ${sunriseEndInUTC}, Sunset: ${sunsetStartInUTC} to ${sunsetEndInUTC}`);
 
-        if (currentTime >= sunriseStart && currentTime <= sunriseEnd) {
+        if (currentTime >= sunrisestartInUTC && currentTime <= sunriseEndInUTC) {
             sunriseEvent = { time: currentTime, location: { lat, lon } };
         }
-        if (currentTime >= sunsetStart && currentTime <= sunsetEnd) {
+        if (currentTime >= sunsetStartInUTC && currentTime <= sunsetEndInUTC) {
             sunsetEvent = { time: currentTime, location: { lat, lon } };
         }
         console.log(sunsetEvent, sunriseEvent);
