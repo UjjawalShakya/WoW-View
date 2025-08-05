@@ -42,13 +42,12 @@ async function getSeatRecommendation(req, res) {
         if (!sourceAirport || !destAirport) {
             return res.status(404).json({ error: 'One or both airport codes could not be found.' });
         }
-        console.log("Source and Destination Airport Data:");
-        console.log(sourceAirport, destAirport);
-
+        const localDeparture = new Date(departureTime);
+        const utcDeparture = new Date(localDeparture.toISOString());
         const flightDetails = {
             source: source.toUpperCase(),
             destination: destination.toUpperCase(),
-            departureTime: departureTime,
+            departureTime: utcDeparture,
             duration: parseInt(duration, 10),
             sunPreference: {
                 wantsSunrise: wantsSunrise === 'true',
@@ -68,8 +67,8 @@ async function getSeatRecommendation(req, res) {
             ...recommendation,
             sourceAirport,
             destAirport,
-            departureTime: flightDetails.departureTime,
-            duration: flightDetails.duration
+            departureTime: departureTime,
+            duration: duration
         });
 
     } catch (error) {
