@@ -42,6 +42,8 @@ async function getSeatRecommendation(req, res) {
         if (!sourceAirport || !destAirport) {
             return res.status(404).json({ error: 'One or both airport codes could not be found.' });
         }
+        console.log("Source and Destination Airport Data:");
+        console.log(sourceAirport, destAirport);
 
         const flightDetails = {
             source: source.toUpperCase(),
