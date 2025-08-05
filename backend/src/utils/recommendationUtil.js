@@ -39,8 +39,7 @@ function recommendSideByLonAngle(flightCoords, destCoords, time) {
 }
 
 exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, destAirport) {
-    const departureTime = flightDetails.departureTime;
-    const duration = flightDetails.duration;
+    const { departureTime, duration } = flightDetails;
     const intervalMinutes = 1;
     const sourceCoords = [sourceAirport.location.lon, sourceAirport.location.lat];
     const destCoords = [destAirport.location.lon, destAirport.location.lat];
@@ -50,30 +49,26 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
 
     for (let i = 0; i <= duration; i += intervalMinutes) {
         const currentTime = new Date(departureTime.getTime() + i * 60 * 1000);
-        const currentTimeInUTC = new Date(currentTime.toISOString());
+        
         const distAlong = (i / (duration || 1)) * totalLength;
         const coord = turf.along(path, distAlong).geometry.coordinates;
+        const [lon, lat] = coord;
+
         const side = recommendSideByLonAngle(coord, destCoords, currentTime);
         if (side === "LEFT") leftCount++; else rightCount++;
-        const [lon, lat] = coord;
-        const dateAtLocation = new Date(currentTimeInUTC);
-        const dateAtLocationInUTC = new Date(dateAtLocation.toISOString());
-        dateAtLocationInUTC.setHours(12,0,0,0);
-        const times = SunCalc.getTimes(dateAtLocation, lat, lon, 0, false, true);
-        const sunriseStart = new Date(times.sunrise.getTime() - 5 * 60 * 1000);
-        const sunriseEnd = new Date(times.sunrise.getTime() + 5 * 60 * 1000);
-        const sunsetStart = new Date(times.sunset.getTime() - 5 * 60 * 1000);
-        const sunsetEnd = new Date(times.sunset.getTime() + 5 * 60 * 1000);
-        const sunrisestartInUTC = new Date(sunriseStart.toISOString());
-        const sunriseEndInUTC = new Date(sunriseEnd.toISOString());
-        const sunsetStartInUTC = new Date(sunsetStart.toISOString());
-        const sunsetEndInUTC = new Date(sunsetEnd.toISOString());
 
-        if (currentTimeInUTC >= sunrisestartInUTC && currentTimeInUTC <= sunriseEndInUTC) {
-            sunriseEvent = { time: currentTime, location: { lat, lon } };
+        const times = SunCalc.getTimes(currentTime, lat, lon, 0, false, true);
+
+        const fiveMinutes = 5 * 60 * 1000;
+        if (Math.abs(currentTime.getTime() - times.sunrise.getTime()) <= fiveMinutes) {
+            if (!sunriseEvent) {
+                 sunriseEvent = { time: currentTime, location: { lat, lon } };
+            }
         }
-        if (currentTimeInUTC >= sunsetStartInUTC && currentTimeInUTC <= sunsetEndInUTC) {
-            sunsetEvent = { time: currentTime, location: { lat, lon } };
+        if (Math.abs(currentTime.getTime() - times.sunset.getTime()) <= fiveMinutes) {
+             if (!sunsetEvent) {
+                 sunsetEvent = { time: currentTime, location: { lat, lon } };
+            }
         }
     }
 
@@ -97,5 +92,3 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
 
     return { side: finalSide, reason, sunrise: sunriseEvent, sunset: sunsetEvent };
 }
-
-// module.exports = { generateAdvancedRecommendation };

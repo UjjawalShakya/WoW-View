@@ -42,12 +42,11 @@ async function getSeatRecommendation(req, res) {
         if (!sourceAirport || !destAirport) {
             return res.status(404).json({ error: 'One or both airport codes could not be found.' });
         }
-        const localDeparture = new Date(departureTime);
-        const utcDeparture = new Date(localDeparture.toISOString());
+        const departureDate = new Date(departureTime);
         const flightDetails = {
             source: source.toUpperCase(),
             destination: destination.toUpperCase(),
-            departureTime: utcDeparture,
+            departureTime: departureDate,
             duration: parseInt(duration, 10),
             sunPreference: {
                 wantsSunrise: wantsSunrise === 'true',
