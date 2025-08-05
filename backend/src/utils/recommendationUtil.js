@@ -40,6 +40,7 @@ function recommendSideByLonAngle(flightCoords, destCoords, time) {
 
 exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, destAirport) {
     const departureTime = new Date(flightDetails.departureTime);
+    console.log("Departure Time:", departureTime);
     const duration = flightDetails.duration;
     const intervalMinutes = 1;
     const sourceCoords = [sourceAirport.location.lon, sourceAirport.location.lat];
