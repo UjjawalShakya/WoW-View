@@ -69,6 +69,7 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
         if (currentTime >= sunsetStart && currentTime <= sunsetEnd) {
             sunsetEvent = { time: currentTime, location: { lat, lon } };
         }
+        console.log(sunsetEvent, sunriseEvent);
     }
 
     let finalSide, reason;
