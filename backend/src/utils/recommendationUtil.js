@@ -51,22 +51,22 @@ exports.generateAdvancedRecommendation = function(flightDetails, sourceAirport, 
 
     for (let i = 0; i <= duration; i += intervalMinutes) {
         const currentTime = new Date(departureTime.getTime() + i * 60 * 1000);
-        currentTime = new Date(currentTime.toISOString());
-        console.log(`Current Time: ${currentTime}`);
+        const currentTimeInUTC = new Date(currentTime.toISOString());
+        console.log(`Current Time: ${currentTimeInUTC}`);
         const distAlong = (i / (duration || 1)) * totalLength;
         const coord = turf.along(path, distAlong).geometry.coordinates;
         const side = recommendSideByLonAngle(coord, destCoords, currentTime);
         if (side === "LEFT") leftCount++; else rightCount++;
         const [lon, lat] = coord;
-        const dateAtLocation = new Date(currentTime);
-        dateAtLocation = new Date(dateAtLocation.toISOString());
-        dateAtLocation.setHours(12,0,0,0);
+        const dateAtLocation = new Date(currentTimeInUTC);
+        const dateAtLocationInUTC = new Date(dateAtLocation.toISOString());
+        dateAtLocationInUTC.setHours(12,0,0,0);
         const times = SunCalc.getTimes(dateAtLocation, lat, lon, 0, true);
-        console.log(times);
         const sunriseStart = new Date(times.sunrise.getTime() - 5 * 60 * 1000);
         const sunriseEnd = new Date(times.sunrise.getTime() + 5 * 60 * 1000);
         const sunsetStart = new Date(times.sunset.getTime() - 5 * 60 * 1000);
         const sunsetEnd = new Date(times.sunset.getTime() + 5 * 60 * 1000);
+        console.log(`Sunrise: ${sunriseStart} to ${sunriseEnd}, Sunset: ${sunsetStart} to ${sunsetEnd}`);
 
         if (currentTime >= sunriseStart && currentTime <= sunriseEnd) {
             sunriseEvent = { time: currentTime, location: { lat, lon } };
