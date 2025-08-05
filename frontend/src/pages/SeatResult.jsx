@@ -14,6 +14,33 @@ const ClockIcon = () => (
 );
 
 export default function SeatResult({ result, onBack }) {
+  const getFormattedReason = () => {
+    const relevantEvent = result.sunrise || result.sunset;
+    if (!relevantEvent || !relevantEvent.time) {
+      return result.reason;
+    }
+    const eventDate = new Date(relevantEvent.time);
+    const localTimeString = eventDate.toLocaleTimeString(navigator.language, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+    const reasonPrefix = result.reason.substring(0, result.reason.lastIndexOf('around') + 'around'.length);
+    return `${reasonPrefix} ${localTimeString}.`;
+  };
+
+  const formatDepartureTime = (utcString) => {
+    if (!utcString) return "";
+    return new Date(utcString).toLocaleString(navigator.language, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+  };
+
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-900 via-indigo-700 to-purple-900 px-2"
@@ -38,7 +65,7 @@ export default function SeatResult({ result, onBack }) {
             <div className="flex items-center gap-2">
               <ClockIcon />
               <span className="font-semibold text-blue-900 text-lg">
-                {new Date(result.departureTime || "").toLocaleString()}
+                {formatDepartureTime(result.departureTime)}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -51,14 +78,14 @@ export default function SeatResult({ result, onBack }) {
           <div className="bg-blue-50 rounded-xl p-6 mb-6 shadow">
             <h3 className="text-xl font-bold text-blue-700 mb-2">Recommended Side</h3>
             <div className="text-4xl font-extrabold text-blue-600 mb-2">{result.side}</div>
-            <div className="mb-2 text-blue-900">{result.reason}</div>
+            <div className="mb-2 text-blue-900">{getFormattedReason()}</div>
           </div>
           <button
             onClick={onBack}
             className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-3 px-8 rounded-xl font-bold text-lg hover:bg-indigo-800 transition shadow-lg"
             style={{ cursor: "pointer" }}
           >
-            Back
+            Check Other Flights
           </button>
         </div>
         {/* Right: Map */}

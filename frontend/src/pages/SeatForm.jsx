@@ -1,19 +1,8 @@
 import React, { useState } from "react";
 
-const SunriseIcon = () => (
-  <svg className="inline w-7 h-7 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24">
-    <path d="M12 3v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <circle cx="12" cy="12" r="4" fill="currentColor" className="text-yellow-400"/>
-    <path d="M4 17h16M7 20h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-);
-const SunsetIcon = () => (
-  <svg className="inline w-7 h-7 text-orange-500 mr-2" fill="none" viewBox="0 0 24 24">
-    <path d="M12 21v-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <circle cx="12" cy="12" r="4" fill="currentColor" className="text-orange-400"/>
-    <path d="M4 17h16M7 20h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-);
+const SunriseIcon = () => <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>;
+const SunsetIcon = () => <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>;
+
 
 export default function SeatForm({ onSubmit, loading }) {
   const [source, setSource] = useState("");
@@ -26,7 +15,14 @@ export default function SeatForm({ onSubmit, loading }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ source, destination, date, time, preference, duration });
+    if (!date || !time) {
+      alert("Please select both a date and a time.");
+      return;
+    }
+    const localDateTimeString = `${date}T${time}`;
+    const localDate = new Date(localDateTimeString);
+    const departureTime = localDate.toISOString();
+    onSubmit({ source, destination, departureTime, preference, duration });
   };
 
   return (

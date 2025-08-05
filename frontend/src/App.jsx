@@ -10,11 +10,10 @@ export default function App() {
 
   const handleFormSubmit = async (form) => {
     setLoading(true);
-    const departureTime = `${form.date}T${form.time}:00`;
     const params = new URLSearchParams({
       source: form.source,
       destination: form.destination,
-      departureTime,
+      departureTime: form.departureTime,
       duration: form.duration,
       wantsSunrise: form.preference === "SUNRISE",
       wantsSunset: form.preference === "SUNSET",
